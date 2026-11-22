@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Tools",
+  "version": "0.4.0",
+  "description": "Zrzut ekranu lub zaznaczony tekst, odpowiedź z modelu Gemini, OpenRouter albo Groq.",
+  "minimum_chrome_version": "127",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "https://generativelanguage.googleapis.com/*",
+    "https://openrouter.ai/*",
+    "https://api.groq.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Tools"
+  },
+  "commands": {
+    "capture": {
+      "suggested_key": { "default": "Alt+Shift+1" },
+      "description": "Zrzut ekranu i odpowiedź"
+    },
+    "repeat": {
+      "suggested_key": { "default": "Alt+Shift+2" },
+      "description": "Pokaż lub ukryj panel z odpowiedzią"
+    },
+    "toggleAuto": {
+      "suggested_key": { "default": "Alt+Shift+3" },
+      "description": "Przełącz tryb auto / manual"
+    },
+    "select": {
+      "suggested_key": { "default": "Alt+Shift+4" },
+      "description": "Odpowiedz na zaznaczony tekst"
+    }
+  }
+}

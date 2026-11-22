@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>Tab Tools</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0e1013; --panel: #14171b; --soft: #191d23; --line: #262b33;
+    --fg: #e6eaf0; --muted: #8d96a3;
+  }
+  html[data-theme="light"] {
+    color-scheme: light;
+    --bg: #f7f8fa; --panel: #eff1f4; --soft: #e6e9ee; --line: #dbdfe5;
+    --fg: #12151a; --muted: #5b6472;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body {
+    width: 232px;
+    opacity: .97;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 11.5px/1.38 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+  }
+
+  header { display: flex; align-items: center; justify-content: space-between; height: 26px; padding: 0 8px; }
+  .brand { font-size: 10.5px; font-weight: 650; letter-spacing: 0.04em; }
+  .icon {
+    width: 18px; height: 18px; display: grid; place-items: center;
+    border: 1px solid var(--line); border-radius: 3px; background: transparent;
+    color: var(--muted); font: 400 11px/1 system-ui, sans-serif; cursor: pointer;
+  }
+  .icon:hover { color: var(--fg); border-color: var(--muted); }
+
+  nav { display: flex; gap: 2px; padding: 0 6px; border-bottom: 1px solid var(--line); }
+  nav button {
+    flex: 1; padding: 5px 0 6px; background: none; border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--muted); font: 600 10px/1 system-ui, sans-serif; cursor: pointer;
+  }
+  nav button:hover { color: var(--fg); }
+  nav button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+  .count { margin-left: 3px; font-size: 9px; color: var(--muted); }
+
+  section { padding: 7px 9px 9px; display: flex; flex-direction: column; gap: 6px; max-height: 268px; overflow-y: auto; }
+  section::-webkit-scrollbar { width: 7px; }
+  section::-webkit-scrollbar-thumb { background: var(--line); border-radius: 7px; }
+
+  .item-btn {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 7px 8px; text-align: left; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 5px;
+    background: var(--panel); color: var(--fg);
+    font: 500 11px/1.2 system-ui, sans-serif;
+  }
+  .item-btn:hover { border-color: var(--muted); }
+  .item-btn:active { transform: translateY(1px); }
+  .kb { font: 500 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+
+  .meta { margin-top: 1px; font-size: 10px; color: var(--muted); cursor: pointer; }
+  .meta:hover { color: var(--fg); }
+
+  .errbox {
+    display: flex; align-items: flex-start; gap: 6px;
+    padding: 5px 7px; border: 1px solid var(--line); border-left: 3px solid var(--muted);
+    border-radius: 3px; font-size: 10px; line-height: 1.35; color: var(--fg);
+  }
+  .errbox span { flex: 1; word-break: break-word; }
+  .errbox button {
+    border: 0; background: transparent; color: var(--muted);
+    font: 600 12px/1 system-ui, sans-serif; cursor: pointer; padding: 0 1px;
+  }
+  .errbox button:hover { color: var(--fg); }
+
+  .last {
+    border: 1px solid var(--line); border-radius: 5px; padding: 5px 7px;
+    background: var(--panel); cursor: pointer;
+  }
+  .last:hover { border-color: var(--muted); }
+  .last-h { display: flex; justify-content: space-between; gap: 6px; font-size: 9px; color: var(--muted); }
+  .last p { margin-top: 2px; font-size: 11px; font-weight: 550; line-height: 1.32; word-break: break-word; }
+
+  .lbl {
+    display: block; margin-bottom: 3px;
+    font-size: 9px; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  input[type="password"], input[type="text"], input[type="number"], select {
+    width: 100%; padding: 5px 7px;
+    border: 1px solid var(--line); border-radius: 4px;
+    background: var(--panel); color: var(--fg);
+    font: 400 11px/1.3 system-ui, sans-serif;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--muted); }
+  input::placeholder { color: var(--muted); }
+  .inline { display: flex; gap: 4px; }
+  .inline input { flex: 1; min-width: 0; }
+
+  .btn {
+    padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--panel); color: var(--fg);
+    font: 600 10.5px/1 system-ui, sans-serif; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary { width: 100%; background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .btn.mini { padding: 6px 7px; }
+  .row2 { display: flex; gap: 4px; }
+  .row2 .btn { flex: 1; }
+
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .seg button {
+    flex: 1; padding: 5px 0; background: transparent; border: 0;
+    color: var(--muted); font: 600 10px/1 system-ui, sans-serif; cursor: pointer;
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--soft); color: var(--fg); }
+
+  .hint { font-size: 9.5px; color: var(--muted); }
+  .hint[data-state="bad"] { color: var(--fg); }
+  .check { display: flex; align-items: center; gap: 6px; font-size: 10.5px; }
+  .check input[type="checkbox"] { width: 13px; height: 13px; accent-color: var(--fg); cursor: pointer; }
+  .check input[type="number"] { width: 46px; margin-left: auto; }
+  .check .unit { color: var(--muted); font-size: 9.5px; }
+  .thr { display: flex; gap: 5px; }
+  .thr label { flex: 1; display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+  .thr input { width: 42px; }
+
+  .hist { display: flex; flex-direction: column; gap: 4px; }
+  .hist-item {
+    border: 1px solid var(--line); border-radius: 4px; padding: 5px 7px;
+    background: var(--panel); cursor: pointer;
+  }
+  .hist-item:hover { border-color: var(--muted); }
+  .hist-item .a { font-size: 10.5px; font-weight: 600; line-height: 1.32; word-break: break-word; }
+  .hist-item .q { margin-top: 2px; font-size: 9.5px; color: var(--muted); }
+  .hist-item .m { display: flex; gap: 6px; margin-top: 3px; font-size: 9px; color: var(--muted); }
+  .empty { padding: 12px 0; text-align: center; font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <header>
+    <span class="brand">Tab Tools</span>
+    <button id="btnTheme" class="icon" type="button" title="Zmień motyw" aria-label="Zmień motyw">☀</button>
+  </header>
+
+  <nav role="tablist">
+    <button class="tab" type="button" role="tab" data-tab="actions" aria-selected="true">Akcje</button>
+    <button class="tab" type="button" role="tab" data-tab="settings" aria-selected="false">Ustawienia</button>
+    <button class="tab" type="button" role="tab" data-tab="history" aria-selected="false">Historia<span class="count" id="histCount">0</span></button>
+  </nav>
+
+  <section id="panel-actions" role="tabpanel">
+    <div class="errbox" id="opError" hidden>
+      <span id="errText"></span>
+      <button id="btnErrClose" type="button" title="Ukryj">×</button>
+    </div>
+
+    <div class="last" id="lastBox" hidden title="Pokaż w panelu">
+      <div class="last-h"><span id="lastType">Odpowiedź</span><span id="lastConf"></span></div>
+      <p id="lastText"></p>
+    </div>
+
+    <button id="btnCap" class="item-btn" type="button"><span>Zrzut ekranu</span><span class="kb">Alt+Shift+1</span></button>
+    <button id="btnRep" class="item-btn" type="button"><span>Pokaż / ukryj panel</span><span class="kb">Alt+Shift+2</span></button>
+    <button id="btnSel" class="item-btn" type="button"><span>Zaznaczony tekst</span><span class="kb">Alt+Shift+4</span></button>
+    <div class="meta" id="stateLine">Wczytuję…</div>
+  </section>
+
+  <section id="panel-settings" role="tabpanel" hidden>
+    <div>
+      <span class="lbl">Dostawca</span>
+      <div class="seg" id="providerSeg">
+        <button type="button" data-provider="gemini">Gemini</button>
+        <button type="button" data-provider="openrouter">OpenRouter</button>
+        <button type="button" data-provider="groq">Groq</button>
+      </div>
+    </div>
+
+    <div>
+      <label class="lbl" for="txtKey" id="keyLabel">Klucz Gemini</label>
+      <div class="inline">
+        <input id="txtKey" type="password" placeholder="Wklej klucz" autocomplete="off" spellcheck="false">
+        <button id="btnPeek" class="btn mini" type="button">Pokaż</button>
+      </div>
+      <p class="hint" id="keyHint" style="margin-top:3px;"></p>
+      <button id="btnDelKey" class="btn mini" type="button" style="margin-top:4px;">Usuń klucz</button>
+    </div>
+
+    <button id="btnTest" class="btn" type="button">Testuj połączenie</button>
+    <p class="hint" id="testOut"></p>
+
+    <div>
+      <label class="lbl" for="selModel">Model</label>
+      <select id="selModel"></select>
+    </div>
+
+    <div>
+      <span class="lbl">Tryb</span>
+      <div class="seg" id="modeSeg">
+        <button type="button" data-mode="auto">Auto</button>
+        <button type="button" data-mode="manual">Manual</button>
+      </div>
+      <p class="hint" style="margin-top:3px;">Auto pokazuje panel od razu. Manual tylko przez Alt+Shift+2. Przełączasz też Alt+Shift+3.</p>
+    </div>
+
+    <div>
+      <span class="lbl">Progi pewności</span>
+      <div class="thr">
+        <label>ostrzeżenie <input id="numWarn" type="number" min="0" max="100" step="5"></label>
+        <label>ukryj <input id="numHide" type="number" min="0" max="100" step="5"></label>
+      </div>
+    </div>
+
+    <label class="check"><input id="chkStatus" type="checkbox"><span>Pokazuj status zczytywania</span></label>
+    <label class="check"><input id="chkOptions" type="checkbox"><span>Pokaż wszystkie opcje</span></label>
+    <label class="check"><input id="chkBadge" type="checkbox"><span>Badge przy błędzie</span></label>
+
+    <label class="check"><span>Ukryj panel po</span><input id="numDelay" type="number" min="0" max="30" step="0.5"><span class="unit">s</span></label>
+
+    <button id="btnSave" class="btn primary" type="button">Zapisz</button>
+    <p class="hint" id="saveInfo"></p>
+  </section>
+
+  <section id="panel-history" role="tabpanel" hidden>
+    <div class="hist" id="histList"></div>
+    <button id="btnClear" class="btn" type="button">Wyczyść historię</button>
+    <p class="hint" id="cacheInfo"></p>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
